@@ -1,0 +1,661 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="es" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Empezando mi ruta hacia Typescript: instalando Node.js | Javier Caride</title>
+<meta name="description" content="Lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar: abordamos primero la instalación de Node.js">
+
+
+  <meta name="author" content="Javier Caride">
+  
+  <meta property="article:author" content="Javier Caride">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Javier Caride">
+<meta property="og:title" content="Empezando mi ruta hacia Typescript: instalando Node.js">
+<meta property="og:url" content="https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html">
+
+
+  <meta property="og:description" content="Lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar: abordamos primero la instalación de Node.js">
+
+
+
+
+
+  <meta name="twitter:site" content="@javiercaride">
+  <meta name="twitter:title" content="Empezando mi ruta hacia Typescript: instalando Node.js">
+  <meta name="twitter:description" content="Lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar: abordamos primero la instalación de Node.js">
+  <meta name="twitter:url" content="https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2021-02-01T22:50:00+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Javier Caride",
+      "url": "https://www.javiercaride.dev/"
+    
+  }
+</script>
+
+
+  <meta name="google-site-verification" content="O856nWtIlOrrjrjUz8eTfP1nYzSCI6gaJeKkneGo9TA" />
+
+
+  <meta name="msvalidate.01" content="803C34904FF1105EFBBF42B1078CFF58">
+
+
+
+  <meta name="yandex-verification" content="4b5f64dbf443ef04">
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Javier Caride Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Saltar a navegación principal</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Saltar a contenido</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Saltar a pie</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Javier Caride
+          <span class="site-subtitle">Desarrollando software desde 1999</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/sobre-mi/">Sobre mi</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Alternar menú</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpeg" alt="Javier Caride" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Javier Caride</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Desarrollador de software. Gallego viviendo en Madrid. Apasionado de la tecnología desde 1990. Fotógrafo y runner aficionado en mis ratos libres</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Seguir</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Madrid, España</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Empezando mi ruta hacia Typescript: instalando Node.js">
+    <meta itemprop="description" content="Como con todas las tecnologías a las que uno llega por primera vez, lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar. Los que venimos del mundo PHP sabemos que la configuración más estandar para empezar es símplemente un servidor HTTP Apache con el módulo PHP debidamente configurado para poder arrancar nuestro primer “Hola Mundo” en minutos.">
+    <meta itemprop="datePublished" content="2021-02-01T22:50:00+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Empezando mi ruta hacia Typescript: instalando Node.js
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-02-01T22:50:00+01:00">February 1, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          5 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Como con todas las tecnologías a las que uno llega por primera vez, lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar. Los que venimos del mundo PHP sabemos que la configuración más estandar para empezar es símplemente un servidor HTTP Apache con el módulo PHP debidamente configurado para poder arrancar nuestro primer “Hola Mundo” en minutos.</p>
+
+<p>Los más avanzados explorarán ya Nginx con <a href="https://php-fpm.org/">PHP-FPM</a> pero, en esencia, viene a ser prácticamente lo mismo: un servidor web que se encarga de (simplificándolo mucho) la comunicación HTTP y entregar recursos necesarios al navegador web, y “algo” (un módulo del servidor o un demonio) que se encarga de ejecutar PHP y devolver la salida correspondiente a través del servidor.</p>
+
+<p>Casi todas las distribuciones de Linux cuentan con los paquetes necesarios para empezar y hay muy buenos tutoriales sobre como hacer el setup. Incluso hay proyectos como <a href="https://www.apachefriends.org/es/index.html">XAMPP</a> que facilitan mucho la vida para montar entornos de desarrollo mediante la distribución de un paquete que contiene servidor web, PHP, y base de datos.</p>
+
+<p>En Node.js la cosa cambia un poco. Los que venimos de PHP podemos estar tentados a buscar un módulo para ejecutarlo “embebido” en algún servidor web (Nginx o Apache), pero no.</p>
+
+<p>Para ejecutar Node.js tan sólo necesitamos ir a su <a href="https://nodejs.org/en/">página web</a>, descargar la versión acorde a nuestro sistema operativo, instalarla y ya dispondremos de un nuevo comando <strong>node</strong> en nuestra línea de comandos (bueno realmente se nos instalan muchos más, pero en este momento no nos importa):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:$ node
+Welcome to Node.js v14.15.4.
+Type ".help" for more information.
+&gt; 
+</code></pre></div></div>
+
+<p>Hay que tener claro que <strong>Node.js</strong> es un entorno en tiempo de ejecución que permite la ejecución de código Javascript fuera del navegador y que está pensado (aunque no en exclusiva) para la capa del servidor. Se construyó sobre el motor V8 de Google y además de la ejecución del Javascript ofrece un API orientada a facilitar la construcción de aplicaciones en Javascript capaces de gestionar conexiones HTTP, Web Sockets, eventos asíncronos, etc.</p>
+
+<p>Es por ello que <strong>Node.js</strong> no necesita de un servidor web para funcionar ya que él mismo puede gestionar las conexiones HTTP con el navegador cliente. De hecho el <em>“hola mundo”</em> más básico que podemos tener con node es el siguiente:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">http</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">hostname</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">127.0.0.1</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">port</span> <span class="o">=</span> <span class="mi">8080</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">setHeader</span><span class="p">(</span><span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">text/plain</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hola mundo</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="nx">hostname</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Servidor ejecutándose en http://</span><span class="p">${</span><span class="nx">hostname</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">port</span><span class="p">}</span><span class="s2">/`</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>En este código lo que estamos haciendo es levantar un servidor HTTP en el puerto 8080 y que cada vez que llegue una conexión a ese puerto se responda con el texto <code class="language-plaintext highlighter-rouge">Hola mundo</code>. Si guardamos este trozo de código en un fichero hola_mundo.js y ejecutamos:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ node hola-mundo.js 
+Servidor ejecutándose en http://127.0.0.1:8080/
+</code></pre></div></div>
+
+<p>Veremos que en la consola obtenemos el mensaje <code class="language-plaintext highlighter-rouge">Servidor ejecutándose en http://127.0.0.1:8080/</code> y si vamos al navegador veremos que node está respondiendo como si fuese un Apache o un Nginx:</p>
+
+<p><img src="/assets/images/2020-02-05/hola-mundo-navegador.png" alt="Navegador mostrando nuestro hola mundo en Node.js" title="Navegador mostrando nuestro hola mundo en Node.js" /></p>
+
+<h2 id="qué-opción-es-la-mejor-para-instalar-nodejs">¿Qué opción es la mejor para instalar Node.js?</h2>
+
+<p>Antes dije que para usar Node <em>sólo</em> tenemos que instalarlo y ya, pero ese <em>sólo</em> puede abrumarnos en un principio porque en <a href="https://nodejs.org/en/download/">la página de descargas de Node.js</a> podemos ver que las opciones son numerosas:</p>
+
+<ul>
+  <li>Binarios: (tanto instaladores oficiales para Windows como compilados para macOS / Linux)</li>
+  <li>Contenedores <em>docker</em></li>
+  <li>Gestores de paquetes</li>
+  <li>Código fuente para compilarlo uno mismo</li>
+</ul>
+
+<p>Este gran número de opciones pueden confundirnos en un principio y más porque se nos ofrece 2 versiones diferentes de Node.js: la más reciente y la LTS</p>
+
+<p>Pues aquí no hay una solución infalible, va a depender mucho del sistema operativo que utilices y del uso que vayas a hacer de Node.js.</p>
+
+<p>Si sólo vas a cacharrear un poco para probar seguramente con bajar el binario correspondiente a tu sistema operativo sea suficiente. O, en el caso de las distribuciones de linux, sea mucho más fácil instalar el paquete que viene oficialmente en la distribución, aunque has de tener en cuenta que con este método normalmente no vas a tener la última versión.</p>
+
+<p>En cuanto llevas cierto tiempo con Node, te acabas dando cuenta de que es una comunidad muy activa y que el entorno evoluciona muy rápidamente, con lo que hay versiones nuevas muy a menudo y éstas traen, a veces, cambios que no son compatibles hacia atrás o bien las librerías que usas no funcionan bien en la última versión disponible.</p>
+
+<p>En esos momentos el tener instalado Node como binario disponible de forma global en el sistema operativo o mediante el paquete de tu distribución Linux hace que no sea cómodo cambiar de versión y puede dificultar el día a día, sobre todo si lo usas en proyectos profesionales.</p>
+
+<p>Es aquí donde yo veo una gran ventaja utilizar un gestor de paquetes que te permita instalar distintas versiones de node de forma local a tu usuario y cambiar entre una u otra de forma muy fácil. Esto te permite probar versiones nuevas con poco riesgo y sin pasarte horas reconfigurando tu entorno de desarrollo.</p>
+
+<p>De todos los que he probado el que más me ha gustado a mi es <a href="https://github.com/nvm-sh/nvm"><strong>nvm</strong></a>. Y reitero que es la opción que más me ha gustado a mi y que mejor se adapta al uso que hago y al sistema operativo que utilizo (Ubuntu LTS). Mi recomendación es que probéis distintas opciones y adoptéis la que mejor se os adapte a vosotros.</p>
+
+<p>El gestor <strong>nvm</strong> es un script de bash que se instala muy fácilmente ejecutando el script sh que su autor provee:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-o-</span> https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+</code></pre></div></div>
+
+<p>Tras la instalación dispondréis en vuestra línea de comandos del comando nvm que os permitirá instalar distintas versiones de Node.js (y sus herramientas) y, lo más potente, cambiar de una a otra de forma sencilla.</p>
+
+<p>Por ejemplo si queremos instalar la última versión LTS sólo tendríamos que ejecutar:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm <span class="nb">install</span> <span class="nt">--lts</span>
+</code></pre></div></div>
+
+<p>Si además de la LTS queremos instalar una versión concreta porque tenemos un proyecto que la necesita sólo tendremos que indicarlo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm <span class="nb">install </span>15.8.0
+</code></pre></div></div>
+
+<p>y para usarla se lo decimos a nvm:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm use 15.8.0
+</code></pre></div></div>
+
+<p>Si ahora le preguntamos al sistema operativo <code class="language-plaintext highlighter-rouge">whereis node</code> veremos que obtendremos que apunta a la instalación local que nos ha dejado nvm y a la versión que le hemos pedido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>whereis node
+node: /home/javiercaride/.nvm/versions/node/v15.8.0/bin/node
+</code></pre></div></div>
+
+<p>Las opciones de este gestor de paquetes node son amplias y están bien documentadas en su <a href="https://github.com/nvm-sh/">página de Github</a></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Actualizado:</strong> <time datetime="2021-02-01T22:50:00+01:00">February 1, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Compartir en</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?via=javiercaride&text=Empezando+mi+ruta+hacia+Typescript%3A+instalando+Node.js%20https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F02%2F01%2Fempezando-mi-ruta-hacia-typescript-instalando-node-js.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F02%2F01%2Fempezando-mi-ruta-hacia-typescript-instalando-node-js.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F02%2F01%2Fempezando-mi-ruta-hacia-typescript-instalando-node-js.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html" class="pagination--pager" title="Salir de mi zona de confort: PHP a NodeJS y Typescript
+">Anterior</a>
+    
+    
+      <a href="/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html" class="pagination--pager" title="Creando un esqueleto de API básico con Typescript y Koa - Parte 1
+">Siguiente</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">Puede que también te interese</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html" rel="permalink">Creando un esqueleto de API básico con Typescript y Koa - Parte 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-06-19T16:50:00+02:00">June 19, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          10 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. L...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html" rel="permalink">Salir de mi zona de confort: PHP a NodeJS y Typescript
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-10-13T23:50:00+02:00">October 13, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Llevo desarrollando software de forma profesional desde 1999, año en el que descubrí PHP. Recuerdo muy bien que lo descubrí de casualidad en una revista en p...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/general/2020/04/15/hellow-world-again.html" rel="permalink">¡Hola mundo! (de nuevo)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-04-15T19:55:09+02:00">April 15, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          1 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Hace unos años (en pleno boom de los blogs donde si no tenías uno no eras nadie) mantenía mi blog personal donde principalmente contaba aquellas cosas que ib...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Seguir:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 Javier Caride. Funciona con <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

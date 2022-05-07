@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="https://www.javiercaride.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://www.javiercaride.dev/" rel="alternate" type="text/html" /><updated>2022-05-07T20:32:50+02:00</updated><id>https://www.javiercaride.dev/feed.xml</id><title type="html">Javier Caride</title><subtitle>Desarrollador de software y apasionado de la tecnología desde 1990. Utilizo principalmente PHP, TypeScript, Python, MySQL, MongoDB, ElasticSearch en mis desarrollos</subtitle><author><name>Javier Caride</name></author><entry><title type="html">Creando un esqueleto de API básico con Typescript y Koa - Parte 1</title><link href="https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html" rel="alternate" type="text/html" title="Creando un esqueleto de API básico con Typescript y Koa - Parte 1" /><published>2021-06-19T16:50:00+02:00</published><updated>2021-06-19T16:50:00+02:00</updated><id>https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i</id><content type="html" xml:base="https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html"><![CDATA[<p>Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.</p>
+
+<p>Esto no es algo nuevo para una persona que desarrolla en PHP. Desde hace años estamos acostumbradas a elegir entre Laravel, Symfony, Laminas, Lumen, CakePHP, Yii, etc. para facilitar el desarrollo y no tener que “pegarnos” con temas ya solucionados como el enrutado. Con Node.js la cosa no es diferente y tenemos en el mercado diferentes frameworks: <a href="https://expressjs.com/">Express</a>, <a href="https://hapi.dev/">Hapi</a>, <a href="https://www.fastify.io/">Fastify</a>, <a href="https://koajs.com/">Koa</a>, etc.</p>
+
+<p>¿Cual elegir? Pues bueno, como siempre las soluciones mágicas no existen y ahí toca que cada uno evalúe sus requisitos y necesidades antes de <em>“casarse”</em> con una solución concreta. Hay muchas cosas a tener en cuenta: rendimiento, cantidad de documentación disponible, tamaño de la comunidad, etc. o incluso algunas bastante importantes si la decisión es para desarrollar una solución para una empresa, como por ejemplo la facilidad de encontrar personas que desarrollen con ese framework o el posible soporte profesional por parte de una empresa. En mi caso elegí Koa porque empieza a tener una comunidad creciente, se actualiza a menudo y ha sido creado por parte del equipo original de Express (que realmente es el más usado y sería otra buena opción para empezar).</p>
+
+<h2 id="arrancando-el-esqueleto">Arrancando el esqueleto</h2>
+
+<p>A la hora de crear un proyecto nuevo en Node, descubrí que no es muy diferente a la filosofía de los proyectos PHP que hacen uso de <a href="https://getcomposer.org/">Composer</a>. Si en PHP tienes el fichero <code class="language-plaintext highlighter-rouge">composer.json</code> que es el que utilizas para gestionar dependencias, scripts de construcción, etc. en Node.JS tienes el fichero <code class="language-plaintext highlighter-rouge">package.json</code>.</p>
+
+<p>Por lo tanto, lo primero que tenemos que hacer es inicializar el fichero <code class="language-plaintext highlighter-rouge">package.json</code> desde el cual gestionaremos todas las dependencias del proyecto. Comenzaremos entonces por crear un directorio para nuestro proyecto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>koa-test-api
+<span class="nb">cd </span>koa-test-api
+</code></pre></div></div>
+
+<p>y a continuación ejecutamos</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm init <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Esta instrucción crea un fichero package.json con el los valores básicos por defecto y que será el que usaremos como base para definir las dependencias del proyecto y definir los scripts de construcción.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"koa-test-api"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"index.js"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"test"</span><span class="p">:</span><span class="w"> </span><span class="s2">"echo </span><span class="se">\"</span><span class="s2">Error: no test specified</span><span class="se">\"</span><span class="s2"> &amp;&amp; exit 1"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"keywords"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ISC"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación instalamos las dependencias del proyecto, lo cual no difiere mucho de cómo venía haciéndolo en PHP con composer:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>koa koa-bodyparser koa-router koa-helmet
+</code></pre></div></div>
+
+<p>Con esta instrucción estamos instalando:</p>
+
+<ul>
+  <li>koa: framework web ligero que nos facilitar la creación de un servidor http</li>
+  <li>koa-bodyparser: middleware que ofrece utilidades para la gestión del cuerpo de las peticiones</li>
+  <li>koa-router: middleware para la gestión de rutas</li>
+  <li>koa-helmet: middleware para añadir cabeceras de seguridad en las respuestas</li>
+</ul>
+
+<h2 id="instalando-el-lenguaje-typescript">Instalando el lenguaje Typescript</h2>
+
+<p>Por defecto cuando arrancamos un proyecto de Node.js la opción por defecto es trabajar con Javascritp directamente. Para usar Typescript como lenguaje en nuestro proyecto necesitamos instalarlo. La instalación se hace con <strong>npm</strong> y tenemos dos opciones, instalarlo globalmente (como un comando más del sistema operativo) o como dependencia del proyecto en el que estás trabajando.</p>
+
+<p>La opción más recomendable para instalar Typescript es instalarlo como dependencia de cada proyecto para así mantener la versión más indicada para cada uno de ellos, de forma que sea fácil trabajar en la misma máquina de desarrollo con distintas versiones del lenguaje.</p>
+
+<p>Typescript se instala realmente como una dependencia sólo de la fase de desarrollo. Esto es así porque el código Typescript se va a <em>transpilar</em> (algunos prefieren llamarlo compilar) a código Javascript y es este último el que se ejecuta realmente en Node. Para instalarlo utilizamos el comando <em>npm</em> pasándole como opción <code class="language-plaintext highlighter-rouge">--save-dev</code> para que se instale como dependencia sólo de desarrollo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> typescript
+</code></pre></div></div>
+
+<p>Como Typescript es un lenguaje tipado, para aquellas librerías que no ofrecen los tipos directamente, hay que instalar dependencias adicionales.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> @types/koa @types/koa-bodyparser @types/koa-helmet @types/koa-router
+</code></pre></div></div>
+
+<p>La configuración del lenguaje se almacena en un fichero tsconfig.json (que sería el equivalente al php.ini en PHP). Existen configuraciones recomendadas según la plataforma usadas y que se pueden extender (lo cual facilita el setup). Por ejemplo si estamos trabajando con Node 14 (última LTS al escribir esto) instalaríamos la siguiente dependencia de desarrollo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> @tsconfig/node14
+</code></pre></div></div>
+
+<p>Y en nuestro proyecto comenzaríamos el fichero tsconfig.json de esta forma:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@tsconfig/node14/tsconfig.json"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación podemos añadir aquellas configuraciones que necesitemos para nuestro proyecto:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@tsconfig/node14/tsconfig.json"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"compilerOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"declaration"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sourceMap"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"outDir"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dist"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"include"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"src"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"exclude"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"node_modules"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>El fichero <code class="language-plaintext highlighter-rouge">tsconfig.json</code> es muy importante porque es el que le dice al comando <code class="language-plaintext highlighter-rouge">tsc</code> cómo debe generar el código Javascript, es decir, con qué versión del lenguaje (ES3, ES5, ES6…), cómo hacer la carga de módulos y dependencias, qué destino va a tener el código (si se va a ejecutar en Node o bien en el navegador), etc.</p>
+
+<p>Una vez instalado y configurado Typescript, necesitamos añadir la instrucción para poder “transpilar” el código Typescript a Javascript. Para ello añadimos una tarea en el package.json:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="configurando-un-linter-para-ayudarnos-a-verificar-el-formato-de-nuestro-código">Configurando un <em>linter</em> para ayudarnos a verificar el formato de nuestro código</h2>
+
+<p>Es buena práctica utilizar un <em>linter</em> para ayudarnos a cumplir un estándar en el formato de nuestro código. Hasta hace poco el <em>linter</em> recomendado para Typescript era <code class="language-plaintext highlighter-rouge">tslint</code> pero para desarrollos nuevos en la propia documentación de Typescript recomiendan usar en su lugar <code class="language-plaintext highlighter-rouge">eslint</code>.</p>
+
+<p>Para ello primero instalamos el linter:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+</code></pre></div></div>
+
+<p>Después de instalar el linter, tenemos que fijar las reglas de verificación. Éstas se configuran en el fichero <code class="language-plaintext highlighter-rouge">.eslintrc</code></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"parser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@typescript-eslint/parser"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"parserOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"ecmaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"sourceType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"module"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"ecmaFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"jsx"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"plugin:@typescript-eslint/recommended"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="añadiendo-pretierr">Añadiendo <em>pretierr</em></h3>
+
+<p>Además del <em>linter</em> es recomendable tener alguna herramienta para formatear nuestro código y dejarlo con el estilo con el que más nos sintamos cómodos, o bien, para dejar el código según la guía de estilo de nuestra empresa.</p>
+
+<p>Uno de los recomendados es <em>prettier</em> que se integra bien con <em>eslint</em>. El primer paso sería, como con cualquier otra dependencia de desarrollo, instalarlo. Para instalar <em>prettier</em> junto con el soporte para integrarse con nuestro linter ejecutaremos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> prettier eslint-config-prettier eslint-plugin-prettier
+</code></pre></div></div>
+
+<p>Como otras tantas herramientas de desarrollo, <em>prettier</em> usa un fichero de configuración llamado <code class="language-plaintext highlighter-rouge">.prettierrc</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"semi"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"trailingComma"</span><span class="p">:</span><span class="w"> </span><span class="s2">"all"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"singleQuote"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"printWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tabWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Para integrarlo con eslint modificaremos nuestro fichero <code class="language-plaintext highlighter-rouge">.eslintrc</code> para incluir las reglas recomendadas:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"parser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@typescript-eslint/parser"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"parserOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"ecmaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"sourceType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"module"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"ecmaFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"jsx"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"plugin:@typescript-eslint/recommended"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"prettier"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"plugin:prettier/recommended"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación es recomendable añadir un script nuevo en nuestro <code class="language-plaintext highlighter-rouge">package.json</code> para poder ejecutar el linter a mano cuando lo necesitemos:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="empezando-a-escribir-código">Empezando a escribir código</h2>
+
+<p>Vale, ya tenemos el entorno base para poder compilar Typescript ahora podemos empezar a escribir algo de código. Vamos a empezar por (como no podía ser de otra manera) con un pequeño “Hola Mundo” en formato API JSON, de forma que cuando llamemos al raíz del servidor nos devuelva el siguiente JSON:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"hello"</span><span class="p">:</span><span class="s2">"Koa"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Para necesitamos:</p>
+
+<ul>
+  <li>Arrancar Koa</li>
+  <li>Definir la ruta raíz</li>
+  <li>Hacer el código necesario para devolver el JSON que queremos</li>
+  <li>Arrancar el servidor</li>
+</ul>
+
+<p>Como este es un ejemplo muy sencillo y básico, vamos a meter todo el código (que tampoco es demasiado) en un único fichero <code class="language-plaintext highlighter-rouge">src/app.ts</code> que va a tener el siguiente contenido:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Koa</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Router</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-router</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">BodyParser</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-bodyparser</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">application</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Koa</span><span class="p">();</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">ctx</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="p">{</span> <span class="na">hello</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Koa</span><span class="dl">'</span> <span class="p">};</span>
+
+  <span class="k">await</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">routes</span><span class="p">()).</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">allowedMethods</span><span class="p">());</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">BodyParser</span><span class="p">());</span>
+
+<span class="nx">application</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Aunque vengamos de otro lenguaje de programación, como en mi caso PHP, la estructura de este código nos resultará familiar y fácilmente entendible, aunque, vamos a analizarlo un poco para entenderlo.</p>
+
+<p>Las primeras 3 líneas son la importación de las dependencias, es decir decir qué recursos de las librerías necesitamos para nuestro código:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Koa</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Router</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-router</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">BodyParser</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-bodyparser</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Para las personas que desarrollamos PHP en las versiones más actuales nos resultará fácil identificar estos <code class="language-plaintext highlighter-rouge">import</code> con los <code class="language-plaintext highlighter-rouge">use</code> de PHP como por ejemplo:</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="kn">use</span> <span class="nc">Slim\App</span><span class="p">;</span>
+<span class="kn">use</span> <span class="nc">Slim\Middleware\ErrorMiddleware</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>A continuación tenemos la creación de los objetos que necesitamos:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">application</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Koa</span><span class="p">();</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>En este caso tenemos creamos dos objetos <code class="language-plaintext highlighter-rouge">application</code> y <code class="language-plaintext highlighter-rouge">router</code>. El primero es el framework en sí mismo y el segundo el “enrutador” que nos va a facilitar definir las rutas que nuestro API va a ofrecer. Éstas se definen de la siguiente forma:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">router</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">ctx</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="p">{</span> <span class="na">hello</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Koa</span><span class="dl">'</span> <span class="p">};</span>
+
+  <span class="k">await</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Aquí le estamos diciendo al enrutador que cuando se reciba una petición HTTP a la ruta raíz se derive la ejecución al <em>callback</em>. Ésta función <em>callback</em> lo único que hace es cambiar el valor del cuerpo de la respuesta al objeto que nos interesa.</p>
+
+<p>¿Y como le decimos a Koa que existen esas rutas y que lo que tiene que devolver es un JSON?. Pues bien, Koa se basa en la utilización de <em>middlewares</em> para delegar ciertas funcionalidades y para ello sólo hay que decirle a Koa que los use:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">routes</span><span class="p">()).</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">allowedMethods</span><span class="p">());</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">BodyParser</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>En la primera línea estamos inyectando en Koa el <em>middleware</em> de enrutado y en la segunda uno que nos permite manejar de forma fácil la salida en los formatos más estándar. En este caso la función de <code class="language-plaintext highlighter-rouge">BodyParser()</code> es la que permite pasar a la propiedad <code class="language-plaintext highlighter-rouge">ctx.body</code> un objeto y que en la salida tengamos un JSON bien formado y con sus cabeceras.</p>
+
+<p>Ya, por último, nos queda arrancar el servidor. Si habéis leído mi entrada anterior y venís del mundo PHP recordaréis que no necesitamos un servidor web como Apache o Nginx para ejecutar nuestro código en Node, si no que tanto Node como los framework como Koa son capaces de manejar tráfico HTTP por ellos mismos. Para eso tenemos la última línea de nuestro código</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">application</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Aquí le estamos diciendo que se ponga a escuchar en el puerto TCP 3000, con lo que ya estamos en disposición de ir a la consola y “transpilar” nuestro código. Para ello ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run build
+</code></pre></div></div>
+
+<p>Con lo que veremos algo similar a esto en la salida</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:~/workspace/koa-test-api$ npm run build
+
+&gt; koa-test-api@1.0.0 build /home/javiercaride/workspace/koa-test-api
+&gt; npx tsc
+
+javiercaride@beast:~/workspace/koa-test-api$ 
+</code></pre></div></div>
+
+<p>Bien, ya estamos en disposición de ejecutar nuestro código, pero antes debemos añadir en el <code class="language-plaintext highlighter-rouge">package.json</code> una tarea más para facilitar el arranque del servidor, concretamente la línea <code class="language-plaintext highlighter-rouge">start</code> del objeto <code class="language-plaintext highlighter-rouge">scripts</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node dist/app.js"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Si volvemos a la consola y ejecutamos <code class="language-plaintext highlighter-rouge">npm start</code> veremos que se ejecuta algo pero que no devuelve el control al terminal:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:~/workspace/koa-test-api$ npm start
+
+&gt; koa-test-api@1.0.0 start /home/javiercaride/workspace/koa-test-api
+&gt; node dist/app.js
+</code></pre></div></div>
+
+<p>Esto significa que nuestro primer programa en Typescript con Koa se ha puesto a escuchar en el puerto 3000. Vamos a probarlo ejecutando en otra consola el siguiente curl:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> GET <span class="s1">'http://localhost:3000/'</span>
+</code></pre></div></div>
+
+<p>Y como por arte de magia veremos lo siguiente:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 15
+Date: Sat, 19 Jun 2021 15:32:48 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"hello":"Koa"}
+</code></pre></div></div>
+
+<p>Como podéis comprobar nuestras 17 líneas de código son capaces de responder una petición HTTP GET, devolver un objeto JSON y las cabeceras correctas para interpretar la respuesta.</p>
+
+<p>Si hiciésemos una solicitud con método POST, por ejemplo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> POST <span class="se">\</span>
+   <span class="nt">-H</span> <span class="s2">"Content-Type:application/json"</span> <span class="se">\</span>
+   <span class="nt">-d</span> <span class="se">\</span>
+<span class="s1">'{}'</span> <span class="se">\</span>
+ <span class="s1">'http://localhost:3000/'</span>
+</code></pre></div></div>
+
+<p>Veríamos como nos respondería con un código de respuesta 405 (Method not allowed):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 405 Method Not Allowed
+Allow: HEAD, GET
+Content-Type: text/plain; charset=utf-8
+Content-Length: 18
+Date: Sat, 19 Jun 2021 15:36:36 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=utf-8
+Content-Length: 9
+Date: Sat, 19 Jun 2021 15:38:32 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+Not Found
+</code></pre></div></div>
+
+<p>Y si hiciésemos la petición por GET, pero a una ruta diferente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> GET <span class="s1">'http://localhost:3000/user'</span>
+</code></pre></div></div>
+
+<p>Obtendríamos un 404 (Not Found):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=utf-8
+Content-Length: 9
+Date: Sat, 19 Jun 2021 15:38:32 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+Not Found
+</code></pre></div></div>
+
+<h2 id="conclusión">Conclusión</h2>
+
+<p>Aunque los comandos, nombre de los ficheros de configuración, frameworks, etc. son completamente distintos, los conceptos básicos de montar un esqueleto para un API en NodeJS con Typescript y Koa no son muy diferentes a hacerlo en PHP con cualquier framework ligero, lo cual hace que el proceso de cambiar de <em>stack tecnológico</em> no tenga una curva de aprendizaje demasiado difícil.</p>
+
+<h2 id="próximos-pasos">Próximos pasos</h2>
+
+<p>Ahora que tengo un esqueleto muy básico de un API (pero muy muy básico) los siguientes puntos que quiero abordar son:</p>
+
+<ul>
+  <li>Aprender antes de nada como desarrollar tests, para lo cual me adentraré en el framework <em>Mocha</em></li>
+  <li>Establecer una estructura de proyecto completamente agnóstica de Koa de forma que el código con la lógica de negocio pueda reutilizarse con otro framework (por ejemplo Express)</li>
+</ul>]]></content><author><name>Javier Caride</name></author><category term="desarrollo" /><category term="typescript" /><summary type="html"><![CDATA[Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.]]></summary></entry><entry><title type="html">Empezando mi ruta hacia Typescript: instalando Node.js</title><link href="https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html" rel="alternate" type="text/html" title="Empezando mi ruta hacia Typescript: instalando Node.js" /><published>2021-02-01T22:50:00+01:00</published><updated>2021-02-01T22:50:00+01:00</updated><id>https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js</id><content type="html" xml:base="https://www.javiercaride.dev/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html"><![CDATA[<p>Como con todas las tecnologías a las que uno llega por primera vez, lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar. Los que venimos del mundo PHP sabemos que la configuración más estandar para empezar es símplemente un servidor HTTP Apache con el módulo PHP debidamente configurado para poder arrancar nuestro primer “Hola Mundo” en minutos.</p>
+
+<p>Los más avanzados explorarán ya Nginx con <a href="https://php-fpm.org/">PHP-FPM</a> pero, en esencia, viene a ser prácticamente lo mismo: un servidor web que se encarga de (simplificándolo mucho) la comunicación HTTP y entregar recursos necesarios al navegador web, y “algo” (un módulo del servidor o un demonio) que se encarga de ejecutar PHP y devolver la salida correspondiente a través del servidor.</p>
+
+<p>Casi todas las distribuciones de Linux cuentan con los paquetes necesarios para empezar y hay muy buenos tutoriales sobre como hacer el setup. Incluso hay proyectos como <a href="https://www.apachefriends.org/es/index.html">XAMPP</a> que facilitan mucho la vida para montar entornos de desarrollo mediante la distribución de un paquete que contiene servidor web, PHP, y base de datos.</p>
+
+<p>En Node.js la cosa cambia un poco. Los que venimos de PHP podemos estar tentados a buscar un módulo para ejecutarlo “embebido” en algún servidor web (Nginx o Apache), pero no.</p>
+
+<p>Para ejecutar Node.js tan sólo necesitamos ir a su <a href="https://nodejs.org/en/">página web</a>, descargar la versión acorde a nuestro sistema operativo, instalarla y ya dispondremos de un nuevo comando <strong>node</strong> en nuestra línea de comandos (bueno realmente se nos instalan muchos más, pero en este momento no nos importa):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:$ node
+Welcome to Node.js v14.15.4.
+Type ".help" for more information.
+&gt; 
+</code></pre></div></div>
+
+<p>Hay que tener claro que <strong>Node.js</strong> es un entorno en tiempo de ejecución que permite la ejecución de código Javascript fuera del navegador y que está pensado (aunque no en exclusiva) para la capa del servidor. Se construyó sobre el motor V8 de Google y además de la ejecución del Javascript ofrece un API orientada a facilitar la construcción de aplicaciones en Javascript capaces de gestionar conexiones HTTP, Web Sockets, eventos asíncronos, etc.</p>
+
+<p>Es por ello que <strong>Node.js</strong> no necesita de un servidor web para funcionar ya que él mismo puede gestionar las conexiones HTTP con el navegador cliente. De hecho el <em>“hola mundo”</em> más básico que podemos tener con node es el siguiente:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">http</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">hostname</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">127.0.0.1</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">port</span> <span class="o">=</span> <span class="mi">8080</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">((</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">setHeader</span><span class="p">(</span><span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">text/plain</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hola mundo</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="nx">hostname</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Servidor ejecutándose en http://</span><span class="p">${</span><span class="nx">hostname</span><span class="p">}</span><span class="s2">:</span><span class="p">${</span><span class="nx">port</span><span class="p">}</span><span class="s2">/`</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>En este código lo que estamos haciendo es levantar un servidor HTTP en el puerto 8080 y que cada vez que llegue una conexión a ese puerto se responda con el texto <code class="language-plaintext highlighter-rouge">Hola mundo</code>. Si guardamos este trozo de código en un fichero hola_mundo.js y ejecutamos:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ node hola-mundo.js 
+Servidor ejecutándose en http://127.0.0.1:8080/
+</code></pre></div></div>
+
+<p>Veremos que en la consola obtenemos el mensaje <code class="language-plaintext highlighter-rouge">Servidor ejecutándose en http://127.0.0.1:8080/</code> y si vamos al navegador veremos que node está respondiendo como si fuese un Apache o un Nginx:</p>
+
+<p><img src="/assets/images/2020-02-05/hola-mundo-navegador.png" alt="Navegador mostrando nuestro hola mundo en Node.js" title="Navegador mostrando nuestro hola mundo en Node.js" /></p>
+
+<h2 id="qué-opción-es-la-mejor-para-instalar-nodejs">¿Qué opción es la mejor para instalar Node.js?</h2>
+
+<p>Antes dije que para usar Node <em>sólo</em> tenemos que instalarlo y ya, pero ese <em>sólo</em> puede abrumarnos en un principio porque en <a href="https://nodejs.org/en/download/">la página de descargas de Node.js</a> podemos ver que las opciones son numerosas:</p>
+
+<ul>
+  <li>Binarios: (tanto instaladores oficiales para Windows como compilados para macOS / Linux)</li>
+  <li>Contenedores <em>docker</em></li>
+  <li>Gestores de paquetes</li>
+  <li>Código fuente para compilarlo uno mismo</li>
+</ul>
+
+<p>Este gran número de opciones pueden confundirnos en un principio y más porque se nos ofrece 2 versiones diferentes de Node.js: la más reciente y la LTS</p>
+
+<p>Pues aquí no hay una solución infalible, va a depender mucho del sistema operativo que utilices y del uso que vayas a hacer de Node.js.</p>
+
+<p>Si sólo vas a cacharrear un poco para probar seguramente con bajar el binario correspondiente a tu sistema operativo sea suficiente. O, en el caso de las distribuciones de linux, sea mucho más fácil instalar el paquete que viene oficialmente en la distribución, aunque has de tener en cuenta que con este método normalmente no vas a tener la última versión.</p>
+
+<p>En cuanto llevas cierto tiempo con Node, te acabas dando cuenta de que es una comunidad muy activa y que el entorno evoluciona muy rápidamente, con lo que hay versiones nuevas muy a menudo y éstas traen, a veces, cambios que no son compatibles hacia atrás o bien las librerías que usas no funcionan bien en la última versión disponible.</p>
+
+<p>En esos momentos el tener instalado Node como binario disponible de forma global en el sistema operativo o mediante el paquete de tu distribución Linux hace que no sea cómodo cambiar de versión y puede dificultar el día a día, sobre todo si lo usas en proyectos profesionales.</p>
+
+<p>Es aquí donde yo veo una gran ventaja utilizar un gestor de paquetes que te permita instalar distintas versiones de node de forma local a tu usuario y cambiar entre una u otra de forma muy fácil. Esto te permite probar versiones nuevas con poco riesgo y sin pasarte horas reconfigurando tu entorno de desarrollo.</p>
+
+<p>De todos los que he probado el que más me ha gustado a mi es <a href="https://github.com/nvm-sh/nvm"><strong>nvm</strong></a>. Y reitero que es la opción que más me ha gustado a mi y que mejor se adapta al uso que hago y al sistema operativo que utilizo (Ubuntu LTS). Mi recomendación es que probéis distintas opciones y adoptéis la que mejor se os adapte a vosotros.</p>
+
+<p>El gestor <strong>nvm</strong> es un script de bash que se instala muy fácilmente ejecutando el script sh que su autor provee:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-o-</span> https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+</code></pre></div></div>
+
+<p>Tras la instalación dispondréis en vuestra línea de comandos del comando nvm que os permitirá instalar distintas versiones de Node.js (y sus herramientas) y, lo más potente, cambiar de una a otra de forma sencilla.</p>
+
+<p>Por ejemplo si queremos instalar la última versión LTS sólo tendríamos que ejecutar:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm <span class="nb">install</span> <span class="nt">--lts</span>
+</code></pre></div></div>
+
+<p>Si además de la LTS queremos instalar una versión concreta porque tenemos un proyecto que la necesita sólo tendremos que indicarlo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm <span class="nb">install </span>15.8.0
+</code></pre></div></div>
+
+<p>y para usarla se lo decimos a nvm:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nvm use 15.8.0
+</code></pre></div></div>
+
+<p>Si ahora le preguntamos al sistema operativo <code class="language-plaintext highlighter-rouge">whereis node</code> veremos que obtendremos que apunta a la instalación local que nos ha dejado nvm y a la versión que le hemos pedido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>whereis node
+node: /home/javiercaride/.nvm/versions/node/v15.8.0/bin/node
+</code></pre></div></div>
+
+<p>Las opciones de este gestor de paquetes node son amplias y están bien documentadas en su <a href="https://github.com/nvm-sh/">página de Github</a></p>]]></content><author><name>Javier Caride</name></author><category term="desarrollo" /><category term="typescript" /><summary type="html"><![CDATA[Lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas para empezar: abordamos primero la instalación de Node.js]]></summary></entry><entry><title type="html">Salir de mi zona de confort: PHP a NodeJS y Typescript</title><link href="https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html" rel="alternate" type="text/html" title="Salir de mi zona de confort: PHP a NodeJS y Typescript" /><published>2020-10-13T23:50:00+02:00</published><updated>2020-10-13T23:50:00+02:00</updated><id>https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort</id><content type="html" xml:base="https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html"><![CDATA[<p>Llevo desarrollando software de forma profesional desde 1999, año en el que descubrí PHP. Recuerdo muy bien que lo descubrí de casualidad en una revista en papel (sí, papel) sobre Linux que me compraba por aquel entonces. Hablaban de la versión 3.0 del lenguaje y de como añadirle algunas librerías externas para poder <em>parsear</em> plantillas.</p>
+
+<p>Recuerdo que me llamó mucho la atención la facilidad de usarlo y como con unos pocos ficheros podías hacer una web dinámica. Eran los años en los que la burbuja de las .com estaba engordando y todo el mundo quería “tener” eso que empezaba a llamarse web 2.0.</p>
+
+<p>Hasta aquel entonces lo poco que había hecho de web dinámica era con C, compilando unos rudimentarios <em><a href="https://es.wikipedia.org/wiki/Interfaz_de_entrada_com%C3%BAn">cgi</a></em>. Descubrir PHP por aquel entonces me supuso un incremento en la velocidad de desarrollo bestial. Desde entonces ha sido mi lenguaje de programación favorito y en el que he desarrollado prácticamente el 90% de mi código. Aunque he tenido épocas y proyectos profesionales en los que he trabajado en otros lenguajes como Java, PHP me ha acompañado en todos los proyectos de mi carrera profesional.</p>
+
+<p>El lenguaje ha ido evolucionando y desde aquel rudimentario 3.0 el lenguaje se ha ido haciendo cada vez más y más profesional, y a pesar de haber leído multitud de veces artículos titulados <em>“La muerte de PHP”</em> (y haber salido al mercado serios “competidores” como <em><a href="https://rubyonrails.org/">Ruby on Rails</a></em> y <em><a href="https://nodejs.org/es/">NodeJS</a></em>) sigue siendo uno de los más utilizados para desarrollo web, sobre todo debido a su amplia comunidad de desarrolladores y a que tiene una curva de aprendizaje muy asequible.</p>
+
+<p>Precisamente de todos sus “competidores” puede ser que <em>NodeJS</em> haya sido el que más terreno le ha ganado y sobre todo al <em>stack</em> tecnológico al que más desarrolladores de PHP se hayan “convertido”.</p>
+
+<p>Yo reconozco que desde su aparición me subí al carro de los memes que empezaron a circular entre los grupos de desarrollo en los que la gente se burlaba sobre la idea de ejecutar Javascript en el servidor tachándolo casi de juguete infantil. Y durante muchos años lo he obviado, principalmente porque con PHP estaba en una zona de confort muy cómoda: todo lo que me había ido proponiendo desarrollar lo acababa haciendo en PHP sin muchas o pocas dificultades.</p>
+
+<p>Pero el tiempo ha ido pasando, NodeJS ha ido madurando también y generando una legión de adeptos que han gestado una comunidad muy importante de desarrolladores y un “ecosistema” de aplicaciones, bibliotecas y herramientas que lo han convertido en una opción seria. También le ha ayudado mucho el empujón que ha recibido tras popularizarse las arquitecturas basadas en microservicios (donde NodeJS puede usarse para hacer APIs muy ligeras y rápidas) y las orientadas a eventos (donde la asincronía nativa de NodeJS juega un punto a favor).</p>
+
+<p>También yo he ido madurando como profesional y creo que ha llegado el momento de dejar de odiar este stack tecnológico para darle una oportunidad. Sobre todo quiero dejar de odiarlo de forma totalmente irracional y sin haberlo probado. Creo que para rechazar una tecnología o <em>stack</em> tecnológico primero se debe probar, y experimentar por uno mismo sus pros y contras y luego decidir si se desea profundizar en su conocimiento. Además, considero que ya es hora de salir de mi zona de confort y dejar de utilizar PHP “para todo”.</p>
+
+<p>Así que me he puesto manos a la obra y he empezado a montar un pequeño mini-proyecto desde cero usando NodeJS con <a href="https://www.typescriptlang.org/">Typescript</a> y <a href="https://expressjs.com/">ExpressJS</a> para poder entender las entrañas de este <em>stack</em>. La razón de usar Typescript es por una parte profesional (forma parte del <em>stack</em> tecnológico de <a href="https://www.stay-app.com">STAY</a>, compañía en la que trabajo ahora) y por otra parte porque siempre me han gustado más los lenguajes fuertemente tipados (de hecho soy de los programadores que están encantados con el giro que está dando PHP desde la versión 7.0).</p>
+
+<p>En los próximos artículos iré describiendo como está siendo la experiencia desde el punto de vista de un programador anclado muchos años en el viejo PHP.</p>]]></content><author><name>Javier Caride</name></author><category term="desarrollo" /><category term="typescript" /><category term="typescript" /><category term="php" /><category term="evolución" /><summary type="html"><![CDATA[Programando PHP desde 1999 llegó la hora de reconvertirse y empezar a desarrollar con otro de los stack más utilizados: Node.js y Typescript]]></summary></entry><entry><title type="html">¡Hola mundo! (de nuevo)</title><link href="https://www.javiercaride.dev/general/2020/04/15/hellow-world-again.html" rel="alternate" type="text/html" title="¡Hola mundo! (de nuevo)" /><published>2020-04-15T19:55:09+02:00</published><updated>2020-04-15T19:55:09+02:00</updated><id>https://www.javiercaride.dev/general/2020/04/15/hellow-world-again</id><content type="html" xml:base="https://www.javiercaride.dev/general/2020/04/15/hellow-world-again.html"><![CDATA[<p>Hace unos años (en pleno boom de los blogs donde si no tenías uno no eras nadie) mantenía mi blog personal donde principalmente contaba aquellas cosas que iba aprendiendo durante mi carrera profesional. Pero el tiempo necesario para mantenerlo actualizado, el coste de mantener un hosting, la ardua tarea de mantener el wordpress siempre a punto y la poca audiencia que conseguía atraer hizo que desistiese finalmente de seguir con el proyecto.</p>
+
+<p>Han pasado ya unos 7 años desde que desistí de ese proyecto, pero ahora (más viejo y por lo tanto más “sabio”) vuelvo a emprender la aventura de abrir un site personal donde contaros de nuevo batallitas sobre desarrollo de software y curiosidades tecnológicas. Pero esta vez emprendo el proyecto con el simple objetivo de contar cosas que puedan ser útiles a alguien. Atrás quedaron los sueños por llegar en algún momento en ser famoso dentro del panorama blogger tecnológico español.</p>
+
+<p>Este nuevo proyecto empieza de una forma más humilde, aprovechando la facilidad de mantener un blog estático con <a href="https://jekyllrb.com/">Jekill</a> y sobre todo sin ningún objetivo de ganar fama o convertirse en un referente.</p>
+
+<p>Espero entreteneros y que si alguien acaba leyendo mis posts le sirvan de algo.</p>]]></content><author><name>Javier Caride</name></author><category term="general" /><summary type="html"><![CDATA[Tras unos años sin escribir retomo de nuevo mi blog donde contaré diversos temas de tecnología y programación]]></summary></entry></feed>

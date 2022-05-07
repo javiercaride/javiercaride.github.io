@@ -1,0 +1,580 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="es" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Salir de mi zona de confort: PHP a NodeJS y Typescript | Javier Caride</title>
+<meta name="description" content="Programando PHP desde 1999 llegó la hora de reconvertirse y empezar a desarrollar con otro de los stack más utilizados: Node.js y Typescript">
+
+
+  <meta name="author" content="Javier Caride">
+  
+  <meta property="article:author" content="Javier Caride">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Javier Caride">
+<meta property="og:title" content="Salir de mi zona de confort: PHP a NodeJS y Typescript">
+<meta property="og:url" content="https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html">
+
+
+  <meta property="og:description" content="Programando PHP desde 1999 llegó la hora de reconvertirse y empezar a desarrollar con otro de los stack más utilizados: Node.js y Typescript">
+
+
+
+
+
+  <meta name="twitter:site" content="@javiercaride">
+  <meta name="twitter:title" content="Salir de mi zona de confort: PHP a NodeJS y Typescript">
+  <meta name="twitter:description" content="Programando PHP desde 1999 llegó la hora de reconvertirse y empezar a desarrollar con otro de los stack más utilizados: Node.js y Typescript">
+  <meta name="twitter:url" content="https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2020-10-13T23:50:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://www.javiercaride.dev/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Javier Caride",
+      "url": "https://www.javiercaride.dev/"
+    
+  }
+</script>
+
+
+  <meta name="google-site-verification" content="O856nWtIlOrrjrjUz8eTfP1nYzSCI6gaJeKkneGo9TA" />
+
+
+  <meta name="msvalidate.01" content="803C34904FF1105EFBBF42B1078CFF58">
+
+
+
+  <meta name="yandex-verification" content="4b5f64dbf443ef04">
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Javier Caride Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Saltar a navegación principal</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Saltar a contenido</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Saltar a pie</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Javier Caride
+          <span class="site-subtitle">Desarrollando software desde 1999</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/sobre-mi/">Sobre mi</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Alternar menú</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpeg" alt="Javier Caride" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Javier Caride</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Desarrollador de software. Gallego viviendo en Madrid. Apasionado de la tecnología desde 1990. Fotógrafo y runner aficionado en mis ratos libres</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Seguir</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Madrid, España</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Salir de mi zona de confort: PHP a NodeJS y Typescript">
+    <meta itemprop="description" content="Llevo desarrollando software de forma profesional desde 1999, año en el que descubrí PHP. Recuerdo muy bien que lo descubrí de casualidad en una revista en papel (sí, papel) sobre Linux que me compraba por aquel entonces. Hablaban de la versión 3.0 del lenguaje y de como añadirle algunas librerías externas para poder parsear plantillas.">
+    <meta itemprop="datePublished" content="2020-10-13T23:50:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Salir de mi zona de confort: PHP a NodeJS y Typescript
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-10-13T23:50:00+02:00">October 13, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          3 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Llevo desarrollando software de forma profesional desde 1999, año en el que descubrí PHP. Recuerdo muy bien que lo descubrí de casualidad en una revista en papel (sí, papel) sobre Linux que me compraba por aquel entonces. Hablaban de la versión 3.0 del lenguaje y de como añadirle algunas librerías externas para poder <em>parsear</em> plantillas.</p>
+
+<p>Recuerdo que me llamó mucho la atención la facilidad de usarlo y como con unos pocos ficheros podías hacer una web dinámica. Eran los años en los que la burbuja de las .com estaba engordando y todo el mundo quería “tener” eso que empezaba a llamarse web 2.0.</p>
+
+<p>Hasta aquel entonces lo poco que había hecho de web dinámica era con C, compilando unos rudimentarios <em><a href="https://es.wikipedia.org/wiki/Interfaz_de_entrada_com%C3%BAn">cgi</a></em>. Descubrir PHP por aquel entonces me supuso un incremento en la velocidad de desarrollo bestial. Desde entonces ha sido mi lenguaje de programación favorito y en el que he desarrollado prácticamente el 90% de mi código. Aunque he tenido épocas y proyectos profesionales en los que he trabajado en otros lenguajes como Java, PHP me ha acompañado en todos los proyectos de mi carrera profesional.</p>
+
+<p>El lenguaje ha ido evolucionando y desde aquel rudimentario 3.0 el lenguaje se ha ido haciendo cada vez más y más profesional, y a pesar de haber leído multitud de veces artículos titulados <em>“La muerte de PHP”</em> (y haber salido al mercado serios “competidores” como <em><a href="https://rubyonrails.org/">Ruby on Rails</a></em> y <em><a href="https://nodejs.org/es/">NodeJS</a></em>) sigue siendo uno de los más utilizados para desarrollo web, sobre todo debido a su amplia comunidad de desarrolladores y a que tiene una curva de aprendizaje muy asequible.</p>
+
+<p>Precisamente de todos sus “competidores” puede ser que <em>NodeJS</em> haya sido el que más terreno le ha ganado y sobre todo al <em>stack</em> tecnológico al que más desarrolladores de PHP se hayan “convertido”.</p>
+
+<p>Yo reconozco que desde su aparición me subí al carro de los memes que empezaron a circular entre los grupos de desarrollo en los que la gente se burlaba sobre la idea de ejecutar Javascript en el servidor tachándolo casi de juguete infantil. Y durante muchos años lo he obviado, principalmente porque con PHP estaba en una zona de confort muy cómoda: todo lo que me había ido proponiendo desarrollar lo acababa haciendo en PHP sin muchas o pocas dificultades.</p>
+
+<p>Pero el tiempo ha ido pasando, NodeJS ha ido madurando también y generando una legión de adeptos que han gestado una comunidad muy importante de desarrolladores y un “ecosistema” de aplicaciones, bibliotecas y herramientas que lo han convertido en una opción seria. También le ha ayudado mucho el empujón que ha recibido tras popularizarse las arquitecturas basadas en microservicios (donde NodeJS puede usarse para hacer APIs muy ligeras y rápidas) y las orientadas a eventos (donde la asincronía nativa de NodeJS juega un punto a favor).</p>
+
+<p>También yo he ido madurando como profesional y creo que ha llegado el momento de dejar de odiar este stack tecnológico para darle una oportunidad. Sobre todo quiero dejar de odiarlo de forma totalmente irracional y sin haberlo probado. Creo que para rechazar una tecnología o <em>stack</em> tecnológico primero se debe probar, y experimentar por uno mismo sus pros y contras y luego decidir si se desea profundizar en su conocimiento. Además, considero que ya es hora de salir de mi zona de confort y dejar de utilizar PHP “para todo”.</p>
+
+<p>Así que me he puesto manos a la obra y he empezado a montar un pequeño mini-proyecto desde cero usando NodeJS con <a href="https://www.typescriptlang.org/">Typescript</a> y <a href="https://expressjs.com/">ExpressJS</a> para poder entender las entrañas de este <em>stack</em>. La razón de usar Typescript es por una parte profesional (forma parte del <em>stack</em> tecnológico de <a href="https://www.stay-app.com">STAY</a>, compañía en la que trabajo ahora) y por otra parte porque siempre me han gustado más los lenguajes fuertemente tipados (de hecho soy de los programadores que están encantados con el giro que está dando PHP desde la versión 7.0).</p>
+
+<p>En los próximos artículos iré describiendo como está siendo la experiencia desde el punto de vista de un programador anclado muchos años en el viejo PHP.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Actualizado:</strong> <time datetime="2020-10-13T23:50:00+02:00">October 13, 2020</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Compartir en</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?via=javiercaride&text=Salir+de+mi+zona+de+confort%3A+PHP+a+NodeJS+y+Typescript%20https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2020%2F10%2F13%2Fsaliendo-zona-de-confort.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2020%2F10%2F13%2Fsaliendo-zona-de-confort.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2020%2F10%2F13%2Fsaliendo-zona-de-confort.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/general/2020/04/15/hellow-world-again.html" class="pagination--pager" title="¡Hola mundo! (de nuevo)
+">Anterior</a>
+    
+    
+      <a href="/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html" class="pagination--pager" title="Empezando mi ruta hacia Typescript: instalando Node.js
+">Siguiente</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">Puede que también te interese</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html" rel="permalink">Creando un esqueleto de API básico con Typescript y Koa - Parte 1
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-06-19T16:50:00+02:00">June 19, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          10 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. L...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html" rel="permalink">Empezando mi ruta hacia Typescript: instalando Node.js
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-02-01T22:50:00+01:00">February 1, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          5 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Como con todas las tecnologías a las que uno llega por primera vez, lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/general/2020/04/15/hellow-world-again.html" rel="permalink">¡Hola mundo! (de nuevo)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-04-15T19:55:09+02:00">April 15, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          1 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Hace unos años (en pleno boom de los blogs donde si no tenías uno no eras nadie) mantenía mi blog personal donde principalmente contaba aquellas cosas que ib...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Seguir:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 Javier Caride. Funciona con <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

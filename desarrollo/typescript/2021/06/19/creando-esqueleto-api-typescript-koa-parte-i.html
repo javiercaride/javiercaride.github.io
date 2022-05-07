@@ -1,0 +1,932 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="es" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Creando un esqueleto de API básico con Typescript y Koa - Parte 1  | Javier Caride</title>
+<meta name="description" content="Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.">
+
+
+  <meta name="author" content="Javier Caride">
+  
+  <meta property="article:author" content="Javier Caride">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="es_ES">
+<meta property="og:site_name" content="Javier Caride">
+<meta property="og:title" content="Creando un esqueleto de API básico con Typescript y Koa - Parte 1">
+<meta property="og:url" content="https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html">
+
+
+  <meta property="og:description" content="Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.">
+
+
+
+
+
+  <meta name="twitter:site" content="@javiercaride">
+  <meta name="twitter:title" content="Creando un esqueleto de API básico con Typescript y Koa - Parte 1">
+  <meta name="twitter:description" content="Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.">
+  <meta name="twitter:url" content="https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+
+
+
+  <meta property="article:published_time" content="2021-06-19T16:50:00+02:00">
+
+
+
+
+
+
+<link rel="canonical" href="https://www.javiercaride.dev/desarrollo/typescript/2021/06/19/creando-esqueleto-api-typescript-koa-parte-i.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Javier Caride",
+      "url": "https://www.javiercaride.dev/"
+    
+  }
+</script>
+
+
+  <meta name="google-site-verification" content="O856nWtIlOrrjrjUz8eTfP1nYzSCI6gaJeKkneGo9TA" />
+
+
+  <meta name="msvalidate.01" content="803C34904FF1105EFBBF42B1078CFF58">
+
+
+
+  <meta name="yandex-verification" content="4b5f64dbf443ef04">
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Javier Caride Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Saltar a navegación principal</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Saltar a contenido</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Saltar a pie</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Javier Caride
+          <span class="site-subtitle">Desarrollando software desde 1999</span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/sobre-mi/">Sobre mi</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Alternar menú</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/avatar.jpeg" alt="Javier Caride" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Javier Caride</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Desarrollador de software. Gallego viviendo en Madrid. Apasionado de la tecnología desde 1990. Fotógrafo y runner aficionado en mis ratos libres</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Seguir</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">Madrid, España</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span></a></li>
+          
+        
+          
+            <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Creando un esqueleto de API básico con Typescript y Koa - Parte 1">
+    <meta itemprop="description" content="Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.">
+    <meta itemprop="datePublished" content="2021-06-19T16:50:00+02:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Creando un esqueleto de API básico con Typescript y Koa - Parte 1
+</h1>
+          
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-06-19T16:50:00+02:00">June 19, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>Una vez tuve Node.js instalado, el siguiente objetivo que me marqué fue montar un esqueleto básico para poder hacer una pequeña API REST usando Typescript. Leí que se podía trabajar con Node.js nativo pero para no reinventar la rueda y acelerar la velocidad de desarrollo, tenía que elegir un framework que me facilitase las cosas.</p>
+
+<p>Esto no es algo nuevo para una persona que desarrolla en PHP. Desde hace años estamos acostumbradas a elegir entre Laravel, Symfony, Laminas, Lumen, CakePHP, Yii, etc. para facilitar el desarrollo y no tener que “pegarnos” con temas ya solucionados como el enrutado. Con Node.js la cosa no es diferente y tenemos en el mercado diferentes frameworks: <a href="https://expressjs.com/">Express</a>, <a href="https://hapi.dev/">Hapi</a>, <a href="https://www.fastify.io/">Fastify</a>, <a href="https://koajs.com/">Koa</a>, etc.</p>
+
+<p>¿Cual elegir? Pues bueno, como siempre las soluciones mágicas no existen y ahí toca que cada uno evalúe sus requisitos y necesidades antes de <em>“casarse”</em> con una solución concreta. Hay muchas cosas a tener en cuenta: rendimiento, cantidad de documentación disponible, tamaño de la comunidad, etc. o incluso algunas bastante importantes si la decisión es para desarrollar una solución para una empresa, como por ejemplo la facilidad de encontrar personas que desarrollen con ese framework o el posible soporte profesional por parte de una empresa. En mi caso elegí Koa porque empieza a tener una comunidad creciente, se actualiza a menudo y ha sido creado por parte del equipo original de Express (que realmente es el más usado y sería otra buena opción para empezar).</p>
+
+<h2 id="arrancando-el-esqueleto">Arrancando el esqueleto</h2>
+
+<p>A la hora de crear un proyecto nuevo en Node, descubrí que no es muy diferente a la filosofía de los proyectos PHP que hacen uso de <a href="https://getcomposer.org/">Composer</a>. Si en PHP tienes el fichero <code class="language-plaintext highlighter-rouge">composer.json</code> que es el que utilizas para gestionar dependencias, scripts de construcción, etc. en Node.JS tienes el fichero <code class="language-plaintext highlighter-rouge">package.json</code>.</p>
+
+<p>Por lo tanto, lo primero que tenemos que hacer es inicializar el fichero <code class="language-plaintext highlighter-rouge">package.json</code> desde el cual gestionaremos todas las dependencias del proyecto. Comenzaremos entonces por crear un directorio para nuestro proyecto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>koa-test-api
+<span class="nb">cd </span>koa-test-api
+</code></pre></div></div>
+
+<p>y a continuación ejecutamos</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm init <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Esta instrucción crea un fichero package.json con el los valores básicos por defecto y que será el que usaremos como base para definir las dependencias del proyecto y definir los scripts de construcción.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"koa-test-api"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.0"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"main"</span><span class="p">:</span><span class="w"> </span><span class="s2">"index.js"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"test"</span><span class="p">:</span><span class="w"> </span><span class="s2">"echo </span><span class="se">\"</span><span class="s2">Error: no test specified</span><span class="se">\"</span><span class="s2"> &amp;&amp; exit 1"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"keywords"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"author"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ISC"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación instalamos las dependencias del proyecto, lo cual no difiere mucho de cómo venía haciéndolo en PHP con composer:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>koa koa-bodyparser koa-router koa-helmet
+</code></pre></div></div>
+
+<p>Con esta instrucción estamos instalando:</p>
+
+<ul>
+  <li>koa: framework web ligero que nos facilitar la creación de un servidor http</li>
+  <li>koa-bodyparser: middleware que ofrece utilidades para la gestión del cuerpo de las peticiones</li>
+  <li>koa-router: middleware para la gestión de rutas</li>
+  <li>koa-helmet: middleware para añadir cabeceras de seguridad en las respuestas</li>
+</ul>
+
+<h2 id="instalando-el-lenguaje-typescript">Instalando el lenguaje Typescript</h2>
+
+<p>Por defecto cuando arrancamos un proyecto de Node.js la opción por defecto es trabajar con Javascritp directamente. Para usar Typescript como lenguaje en nuestro proyecto necesitamos instalarlo. La instalación se hace con <strong>npm</strong> y tenemos dos opciones, instalarlo globalmente (como un comando más del sistema operativo) o como dependencia del proyecto en el que estás trabajando.</p>
+
+<p>La opción más recomendable para instalar Typescript es instalarlo como dependencia de cada proyecto para así mantener la versión más indicada para cada uno de ellos, de forma que sea fácil trabajar en la misma máquina de desarrollo con distintas versiones del lenguaje.</p>
+
+<p>Typescript se instala realmente como una dependencia sólo de la fase de desarrollo. Esto es así porque el código Typescript se va a <em>transpilar</em> (algunos prefieren llamarlo compilar) a código Javascript y es este último el que se ejecuta realmente en Node. Para instalarlo utilizamos el comando <em>npm</em> pasándole como opción <code class="language-plaintext highlighter-rouge">--save-dev</code> para que se instale como dependencia sólo de desarrollo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> typescript
+</code></pre></div></div>
+
+<p>Como Typescript es un lenguaje tipado, para aquellas librerías que no ofrecen los tipos directamente, hay que instalar dependencias adicionales.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> @types/koa @types/koa-bodyparser @types/koa-helmet @types/koa-router
+</code></pre></div></div>
+
+<p>La configuración del lenguaje se almacena en un fichero tsconfig.json (que sería el equivalente al php.ini en PHP). Existen configuraciones recomendadas según la plataforma usadas y que se pueden extender (lo cual facilita el setup). Por ejemplo si estamos trabajando con Node 14 (última LTS al escribir esto) instalaríamos la siguiente dependencia de desarrollo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> @tsconfig/node14
+</code></pre></div></div>
+
+<p>Y en nuestro proyecto comenzaríamos el fichero tsconfig.json de esta forma:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@tsconfig/node14/tsconfig.json"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación podemos añadir aquellas configuraciones que necesitemos para nuestro proyecto:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@tsconfig/node14/tsconfig.json"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"compilerOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"declaration"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"sourceMap"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"outDir"</span><span class="p">:</span><span class="w"> </span><span class="s2">"dist"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"include"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"src"</span><span class="p">],</span><span class="w">
+  </span><span class="nl">"exclude"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"node_modules"</span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>El fichero <code class="language-plaintext highlighter-rouge">tsconfig.json</code> es muy importante porque es el que le dice al comando <code class="language-plaintext highlighter-rouge">tsc</code> cómo debe generar el código Javascript, es decir, con qué versión del lenguaje (ES3, ES5, ES6…), cómo hacer la carga de módulos y dependencias, qué destino va a tener el código (si se va a ejecutar en Node o bien en el navegador), etc.</p>
+
+<p>Una vez instalado y configurado Typescript, necesitamos añadir la instrucción para poder “transpilar” el código Typescript a Javascript. Para ello añadimos una tarea en el package.json:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="configurando-un-linter-para-ayudarnos-a-verificar-el-formato-de-nuestro-código">Configurando un <em>linter</em> para ayudarnos a verificar el formato de nuestro código</h2>
+
+<p>Es buena práctica utilizar un <em>linter</em> para ayudarnos a cumplir un estándar en el formato de nuestro código. Hasta hace poco el <em>linter</em> recomendado para Typescript era <code class="language-plaintext highlighter-rouge">tslint</code> pero para desarrollos nuevos en la propia documentación de Typescript recomiendan usar en su lugar <code class="language-plaintext highlighter-rouge">eslint</code>.</p>
+
+<p>Para ello primero instalamos el linter:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+</code></pre></div></div>
+
+<p>Después de instalar el linter, tenemos que fijar las reglas de verificación. Éstas se configuran en el fichero <code class="language-plaintext highlighter-rouge">.eslintrc</code></p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"parser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@typescript-eslint/parser"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"parserOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"ecmaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"sourceType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"module"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"ecmaFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"jsx"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"plugin:@typescript-eslint/recommended"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="añadiendo-pretierr">Añadiendo <em>pretierr</em></h3>
+
+<p>Además del <em>linter</em> es recomendable tener alguna herramienta para formatear nuestro código y dejarlo con el estilo con el que más nos sintamos cómodos, o bien, para dejar el código según la guía de estilo de nuestra empresa.</p>
+
+<p>Uno de los recomendados es <em>prettier</em> que se integra bien con <em>eslint</em>. El primer paso sería, como con cualquier otra dependencia de desarrollo, instalarlo. Para instalar <em>prettier</em> junto con el soporte para integrarse con nuestro linter ejecutaremos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save-dev</span> prettier eslint-config-prettier eslint-plugin-prettier
+</code></pre></div></div>
+
+<p>Como otras tantas herramientas de desarrollo, <em>prettier</em> usa un fichero de configuración llamado <code class="language-plaintext highlighter-rouge">.prettierrc</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"semi"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"trailingComma"</span><span class="p">:</span><span class="w"> </span><span class="s2">"all"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"singleQuote"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"printWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">120</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"tabWidth"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Para integrarlo con eslint modificaremos nuestro fichero <code class="language-plaintext highlighter-rouge">.eslintrc</code> para incluir las reglas recomendadas:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"parser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"@typescript-eslint/parser"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"parserOptions"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"ecmaVersion"</span><span class="p">:</span><span class="w"> </span><span class="mi">2020</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"sourceType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"module"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"ecmaFeatures"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"jsx"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"extends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"plugin:@typescript-eslint/recommended"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"prettier"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"plugin:prettier/recommended"</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"rules"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>A continuación es recomendable añadir un script nuevo en nuestro <code class="language-plaintext highlighter-rouge">package.json</code> para poder ejecutar el linter a mano cuando lo necesitemos:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="empezando-a-escribir-código">Empezando a escribir código</h2>
+
+<p>Vale, ya tenemos el entorno base para poder compilar Typescript ahora podemos empezar a escribir algo de código. Vamos a empezar por (como no podía ser de otra manera) con un pequeño “Hola Mundo” en formato API JSON, de forma que cuando llamemos al raíz del servidor nos devuelva el siguiente JSON:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"hello"</span><span class="p">:</span><span class="s2">"Koa"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Para necesitamos:</p>
+
+<ul>
+  <li>Arrancar Koa</li>
+  <li>Definir la ruta raíz</li>
+  <li>Hacer el código necesario para devolver el JSON que queremos</li>
+  <li>Arrancar el servidor</li>
+</ul>
+
+<p>Como este es un ejemplo muy sencillo y básico, vamos a meter todo el código (que tampoco es demasiado) en un único fichero <code class="language-plaintext highlighter-rouge">src/app.ts</code> que va a tener el siguiente contenido:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Koa</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Router</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-router</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">BodyParser</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-bodyparser</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">application</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Koa</span><span class="p">();</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+
+<span class="nx">router</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">ctx</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="p">{</span> <span class="na">hello</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Koa</span><span class="dl">'</span> <span class="p">};</span>
+
+  <span class="k">await</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">routes</span><span class="p">()).</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">allowedMethods</span><span class="p">());</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">BodyParser</span><span class="p">());</span>
+
+<span class="nx">application</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Aunque vengamos de otro lenguaje de programación, como en mi caso PHP, la estructura de este código nos resultará familiar y fácilmente entendible, aunque, vamos a analizarlo un poco para entenderlo.</p>
+
+<p>Las primeras 3 líneas son la importación de las dependencias, es decir decir qué recursos de las librerías necesitamos para nuestro código:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="nx">Koa</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">Router</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-router</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">BodyParser</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">koa-bodyparser</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Para las personas que desarrollamos PHP en las versiones más actuales nos resultará fácil identificar estos <code class="language-plaintext highlighter-rouge">import</code> con los <code class="language-plaintext highlighter-rouge">use</code> de PHP como por ejemplo:</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+
+<span class="kn">use</span> <span class="nc">Slim\App</span><span class="p">;</span>
+<span class="kn">use</span> <span class="nc">Slim\Middleware\ErrorMiddleware</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>A continuación tenemos la creación de los objetos que necesitamos:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">application</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Koa</span><span class="p">();</span>
+<span class="kd">const</span> <span class="nx">router</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Router</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>En este caso tenemos creamos dos objetos <code class="language-plaintext highlighter-rouge">application</code> y <code class="language-plaintext highlighter-rouge">router</code>. El primero es el framework en sí mismo y el segundo el “enrutador” que nos va a facilitar definir las rutas que nuestro API va a ofrecer. Éstas se definen de la siguiente forma:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">router</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">ctx</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="p">{</span> <span class="na">hello</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Koa</span><span class="dl">'</span> <span class="p">};</span>
+
+  <span class="k">await</span> <span class="nx">next</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<p>Aquí le estamos diciendo al enrutador que cuando se reciba una petición HTTP a la ruta raíz se derive la ejecución al <em>callback</em>. Ésta función <em>callback</em> lo único que hace es cambiar el valor del cuerpo de la respuesta al objeto que nos interesa.</p>
+
+<p>¿Y como le decimos a Koa que existen esas rutas y que lo que tiene que devolver es un JSON?. Pues bien, Koa se basa en la utilización de <em>middlewares</em> para delegar ciertas funcionalidades y para ello sólo hay que decirle a Koa que los use:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">routes</span><span class="p">()).</span><span class="nx">use</span><span class="p">(</span><span class="nx">router</span><span class="p">.</span><span class="nx">allowedMethods</span><span class="p">());</span>
+<span class="nx">application</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">BodyParser</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>En la primera línea estamos inyectando en Koa el <em>middleware</em> de enrutado y en la segunda uno que nos permite manejar de forma fácil la salida en los formatos más estándar. En este caso la función de <code class="language-plaintext highlighter-rouge">BodyParser()</code> es la que permite pasar a la propiedad <code class="language-plaintext highlighter-rouge">ctx.body</code> un objeto y que en la salida tengamos un JSON bien formado y con sus cabeceras.</p>
+
+<p>Ya, por último, nos queda arrancar el servidor. Si habéis leído mi entrada anterior y venís del mundo PHP recordaréis que no necesitamos un servidor web como Apache o Nginx para ejecutar nuestro código en Node, si no que tanto Node como los framework como Koa son capaces de manejar tráfico HTTP por ellos mismos. Para eso tenemos la última línea de nuestro código</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">application</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Aquí le estamos diciendo que se ponga a escuchar en el puerto TCP 3000, con lo que ya estamos en disposición de ir a la consola y “transpilar” nuestro código. Para ello ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run build
+</code></pre></div></div>
+
+<p>Con lo que veremos algo similar a esto en la salida</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:~/workspace/koa-test-api$ npm run build
+
+&gt; koa-test-api@1.0.0 build /home/javiercaride/workspace/koa-test-api
+&gt; npx tsc
+
+javiercaride@beast:~/workspace/koa-test-api$ 
+</code></pre></div></div>
+
+<p>Bien, ya estamos en disposición de ejecutar nuestro código, pero antes debemos añadir en el <code class="language-plaintext highlighter-rouge">package.json</code> una tarea más para facilitar el arranque del servidor, concretamente la línea <code class="language-plaintext highlighter-rouge">start</code> del objeto <code class="language-plaintext highlighter-rouge">scripts</code>:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">  </span><span class="nl">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx tsc"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"lint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"npx eslint 'src/**/*.{js,ts,tsx}' --quiet --fix"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"start"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node dist/app.js"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Si volvemos a la consola y ejecutamos <code class="language-plaintext highlighter-rouge">npm start</code> veremos que se ejecuta algo pero que no devuelve el control al terminal:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>javiercaride@beast:~/workspace/koa-test-api$ npm start
+
+&gt; koa-test-api@1.0.0 start /home/javiercaride/workspace/koa-test-api
+&gt; node dist/app.js
+</code></pre></div></div>
+
+<p>Esto significa que nuestro primer programa en Typescript con Koa se ha puesto a escuchar en el puerto 3000. Vamos a probarlo ejecutando en otra consola el siguiente curl:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> GET <span class="s1">'http://localhost:3000/'</span>
+</code></pre></div></div>
+
+<p>Y como por arte de magia veremos lo siguiente:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 15
+Date: Sat, 19 Jun 2021 15:32:48 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"hello":"Koa"}
+</code></pre></div></div>
+
+<p>Como podéis comprobar nuestras 17 líneas de código son capaces de responder una petición HTTP GET, devolver un objeto JSON y las cabeceras correctas para interpretar la respuesta.</p>
+
+<p>Si hiciésemos una solicitud con método POST, por ejemplo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> POST <span class="se">\</span>
+   <span class="nt">-H</span> <span class="s2">"Content-Type:application/json"</span> <span class="se">\</span>
+   <span class="nt">-d</span> <span class="se">\</span>
+<span class="s1">'{}'</span> <span class="se">\</span>
+ <span class="s1">'http://localhost:3000/'</span>
+</code></pre></div></div>
+
+<p>Veríamos como nos respondería con un código de respuesta 405 (Method not allowed):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 405 Method Not Allowed
+Allow: HEAD, GET
+Content-Type: text/plain; charset=utf-8
+Content-Length: 18
+Date: Sat, 19 Jun 2021 15:36:36 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=utf-8
+Content-Length: 9
+Date: Sat, 19 Jun 2021 15:38:32 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+Not Found
+</code></pre></div></div>
+
+<p>Y si hiciésemos la petición por GET, pero a una ruta diferente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-X</span> GET <span class="s1">'http://localhost:3000/user'</span>
+</code></pre></div></div>
+
+<p>Obtendríamos un 404 (Not Found):</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP/1.1 404 Not Found
+Content-Type: text/plain; charset=utf-8
+Content-Length: 9
+Date: Sat, 19 Jun 2021 15:38:32 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+Not Found
+</code></pre></div></div>
+
+<h2 id="conclusión">Conclusión</h2>
+
+<p>Aunque los comandos, nombre de los ficheros de configuración, frameworks, etc. son completamente distintos, los conceptos básicos de montar un esqueleto para un API en NodeJS con Typescript y Koa no son muy diferentes a hacerlo en PHP con cualquier framework ligero, lo cual hace que el proceso de cambiar de <em>stack tecnológico</em> no tenga una curva de aprendizaje demasiado difícil.</p>
+
+<h2 id="próximos-pasos">Próximos pasos</h2>
+
+<p>Ahora que tengo un esqueleto muy básico de un API (pero muy muy básico) los siguientes puntos que quiero abordar son:</p>
+
+<ul>
+  <li>Aprender antes de nada como desarrollar tests, para lo cual me adentraré en el framework <em>Mocha</em></li>
+  <li>Establecer una estructura de proyecto completamente agnóstica de Koa de forma que el código con la lógica de negocio pueda reutilizarse con otro framework (por ejemplo Express)</li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Actualizado:</strong> <time datetime="2021-06-19T16:50:00+02:00">June 19, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Compartir en</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?via=javiercaride&text=Creando+un+esqueleto+de+API+b%C3%A1sico+con+Typescript+y+Koa+-+Parte+1+%20https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F06%2F19%2Fcreando-esqueleto-api-typescript-koa-parte-i.html" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F06%2F19%2Fcreando-esqueleto-api-typescript-koa-parte-i.html" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.javiercaride.dev%2Fdesarrollo%2Ftypescript%2F2021%2F06%2F19%2Fcreando-esqueleto-api-typescript-koa-parte-i.html" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Compartir en LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html" class="pagination--pager" title="Empezando mi ruta hacia Typescript: instalando Node.js
+">Anterior</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Siguiente</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">Puede que también te interese</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2021/02/01/empezando-mi-ruta-hacia-typescript-instalando-node-js.html" rel="permalink">Empezando mi ruta hacia Typescript: instalando Node.js
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2021-02-01T22:50:00+01:00">February 1, 2021</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          5 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Como con todas las tecnologías a las que uno llega por primera vez, lo más complejo de adentrarse en el mundo de Node.js es comprender todo lo que necesitas ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/desarrollo/typescript/2020/10/13/saliendo-zona-de-confort.html" rel="permalink">Salir de mi zona de confort: PHP a NodeJS y Typescript
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-10-13T23:50:00+02:00">October 13, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          3 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Llevo desarrollando software de forma profesional desde 1999, año en el que descubrí PHP. Recuerdo muy bien que lo descubrí de casualidad en una revista en p...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/general/2020/04/15/hellow-world-again.html" rel="permalink">¡Hola mundo! (de nuevo)
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+      
+      <span class="page__meta-date">
+        <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+        
+        <time datetime="2020-04-15T19:55:09+02:00">April 15, 2020</time>
+      </span>
+    
+
+    <span class="page__meta-sep"></span>
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+        
+          1 minuto(s) de lectura
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Hace unos años (en pleno boom de los blogs donde si no tenías uno no eras nadie) mantenía mi blog personal donde principalmente contaba aquellas cosas que ib...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Seguir:</strong></li>
+    
+
+    
+      
+        
+          <li><a href="https://twitter.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+        
+      
+        
+          <li><a href="https://github.com/javiercaride" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 Javier Caride. Funciona con <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
